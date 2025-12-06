@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>920MobDev 技术支持服务</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#e6f1ff',
+                            100: '#cce3ff',
+                            200: '#99c7ff',
+                            300: '#66abff',
+                            400: '#338fff',
+                            500: '#0073ff',
+                            600: '#005ccc',
+                            700: '#004599',
+                            800: '#002e66',
+                            900: '#001733',
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#b9e6fe',
+                            300: '#7cd4fd',
+                            400: '#36bffa',
+                            500: '#0da2e7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        
+        @keyframes typing {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .live-chat-panel {
+                width: calc(100% - 60px);
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 3D背景 -->
+    <div id="canvas-container"></div>
+    
+    
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i class="fas fa-headset text-primary-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">920MobDev</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    
+    <!-- 联系我们 -->
+    <section id="contact" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4" style="margin-top: 20px;">联系我们</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                   如果您在使用应用时遇到问题，请通过以下方式联系我们的支持团队。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-8">
+                
+                <!-- 联系方式卡片 2 -->
+                <div class="card-hover bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-envelope text-primary-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">电子邮件</h3>
+                    <p class="text-gray-600 mb-4">
+                        请发送邮件详细描述您遇到的问题，包括：
+                    </p>
+                   <ul style="margin-left: 20px; margin-bottom: 20px; color: #666;">
+                        <li>您遇到的具体问题</li>
+                        <li>相关游戏名称（如果适用）</li>
+                        <li>您的设备型号和操作系统版本</li>
+                        <li>任何错误消息的截图（如果有）</li>
+                    </ul>
+                    <p style="margin-left: 20px; margin-bottom: 20px; color: #666;">我们的支持团队将在1-3个工作日内回复您的邮件。</p>
+                    <a href="mailto:support@techsupport.com" class="text-primary-500 hover:text-primary-600 font-medium">
+                        jecelyin@gmail.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // FAQ 手风琴效果
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('.faq-icon');
+                
+                answer.classList.toggle('active');
+                icon.classList.toggle('active');
+            });
+        });
+        
+        // 智能问题检索
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        const searchResultsList = document.getElementById('search-results-list');
+        const popularSearches = document.querySelectorAll('.popular-search');
+        
+        // 示例知识库数据
+        const knowledgeBase = [
+            {
+                title: '如何重置账户密码',
+                content: '要重置您的账户密码，请按照以下步骤操作：1. 点击登录页面上的"忘记密码"链接 2. 输入您的注册邮箱地址 3. 您将收到一封包含密码重置链接的邮件 4. 点击链接并按照提示设置新密码',
+                keywords: ['密码', '重置', '忘记密码', '账户']
+            },
+            {
+                title: '软件安装失败解决方案',
+                content: '如果软件安装失败，请尝试以下解决方案：1. 确保您的系统满足软件的最低要求 2. 关闭所有正在运行的程序，尤其是防病毒软件 3. 以管理员身份运行安装程序 4. 下载最新版本的安装程序 5. 检查您的磁盘空间是否充足',
+                keywords: ['软件', '安装', '失败', '错误']
+            },
+            {
+                title: '网络连接问题排查',
+                content: '解决网络连接问题的步骤：1. 重启您的路由器和调制解调器 2. 检查网线连接是否牢固 3. 尝试连接其他设备，确认是否为设备问题 4. 禁用并重新启用网络适配器 5. 运行网络故障排除工具',
+                keywords: ['网络', '连接', '无法连接', 'Wi-Fi']
+            },
+            {
+                title: '数据备份指南',
+                content: '备份数据的方法：1. 使用云存储服务（如Google Drive、Dropbox、OneDrive等） 2. 使用外部硬盘进行本地备份 3. 设置自动备份计划，定期备份重要数据 4. 使用系统内置的备份工具',
+                keywords: ['数据', '备份', '恢复', '保存']
+            },
+            {
+                title: '系统性能优化',
+                content: '提高系统性能的方法：1. 清理临时文件和垃圾文件 2. 卸载不常用的程序 3. 禁用启动项中的不必要程序 4. 增加内存（RAM） 5. 检查硬盘空间，确保有足够的可用空间 6. 扫描并移除恶意软件',
+                keywords: ['系统', '性能', '缓慢', '优化']
+            }
+        ];
+        
+        // 搜索功能
+        function searchKnowledgeBase(query) {
+            if (!query.trim()) return [];
+            
+            query = query.toLowerCase();
+            return knowledgeBase.filter(item => {
+                // 检查标题和内容
+                if (item.title.toLowerCase().includes(query) || 
+                    item.content.toLowerCase().includes(query)) {
+                    return true;
+                }
+                
+                // 检查关键词
+                return item.keywords.some(keyword => keyword.toLowerCase().includes(query));
+            });
+        }
+        
+        // 显示搜索结果
+        function displaySearchResults(results) {
+            searchResultsList.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResultsList.innerHTML = '<p class="text-gray-500">未找到相关结果，请尝试其他关键词。</p>';
+            } else {
+                results.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors';
+                    resultItem.innerHTML = `
+                        <h4 class="font-semibold mb-2">${result.title}</h4>
+                        <p class="text-gray-600 text-sm mb-3">${result.content.substring(0, 150)}${result.content.length > 150 ? '...' : ''}</p>
+                        <button class="view-details text-primary-500 hover:text-primary-600 text-sm font-medium" data-id="${knowledgeBase.indexOf(result)}">
+                            查看详情
+                        </button>
+                    `;
+                    searchResultsList.appendChild(resultItem);
+                });
+                
+                // 添加查看详情事件
+                document.querySelectorAll('.view-details').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        const item = knowledgeBase[id];
+                        
+                        // 这里可以实现查看详情的逻辑，比如弹出模态框
+                        alert(`${item.title}\n\n${item.content}`);
+                    });
+                });
+            }
+            
+            searchResults.classList.remove('hidden');
+        }
+        
+        // 搜索按钮点击事件
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                const results = searchKnowledgeBase(query);
+                displaySearchResults(results);
+            }
+        });
+        
+        // 搜索框回车事件
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    const results = searchKnowledgeBase(query);
+                    displaySearchResults(results);
+                }
+            }
+        });
+        
+        // 热门搜索点击事件
+        popularSearches.forEach(item => {
+            item.addEventListener('click', function() {
+                const query = this.textContent.trim();
+                searchInput.value = query;
+                const results = searchKnowledgeBase(query);
+                displaySearchResults(results);
+            });
+        });
+        
+        // AI助手聊天功能
+        const chatInput = document.getElementById('chat-input');
+        const sendMessage = document.getElementById('send-message');
+        const chatContainer = document.getElementById('chat-container');
+        
+        // 示例回复数据
+        const aiResponses = {
+            '如何重置密码': '要重置您的账户密码，请按照以下步骤操作：1. 点击登录页面上的"忘记密码"链接 2. 输入您的注册邮箱地址 3. 您将收到一封包含密码重置链接的邮件 4. 点击链接并按照提示设置新密码',
+            '软件安装失败': '如果软件安装失败，请尝试以下解决方案：1. 确保您的系统满足软件的最低要求 2. 关闭所有正在运行的程序，尤其是防病毒软件 3. 以管理员身份运行安装程序 4. 下载最新版本的安装程序 5. 检查您的磁盘空间是否充足',
+            '无法连接网络': '解决网络连接问题的步骤：1. 重启您的路由器和调制解调器 2. 检查网线连接是否牢固 3. 尝试连接其他设备，确认是否为设备问题 4. 禁用并重新启用网络适配器 5. 运行网络故障排除工具',
+            '数据备份': '备份数据的方法：1. 使用云存储服务（如Google Drive、Dropbox、OneDrive等） 2. 使用外部硬盘进行本地备份 3. 设置自动备份计划，定期备份重要数据 4. 使用系统内置的备份工具',
+            '系统运行缓慢': '提高系统性能的方法：1. 清理临时文件和垃圾文件 2. 卸载不常用的程序 3. 禁用启动项中的不必要程序 4. 增加内存（RAM） 5. 检查硬盘空间，确保有足够的可用空间 6. 扫描并移除恶意软件',
+            '你好': '您好！我是TechSupport AI助手，很高兴为您提供技术支持。请问有什么可以帮助您的？',
+            '谢谢': '不客气！如果您还有其他问题，随时可以向我咨询。',
+            '再见': '再见！祝您有愉快的一天。如有其他问题，随时欢迎回来咨询。'
+        };
+        
+        // 默认回复
+        const defaultResponse = '抱歉，我无法理解您的问题。请尝试使用更具体的关键词，或者您可以提交工单获取进一步的技术支持。';
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'user-message chat-message';
+            userMessageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(userMessageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 添加机器人消息
+        function addBotMessage(message) {
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'bot-message chat-message';
+            botMessageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(botMessageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 添加正在输入指示器
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'bot-message chat-message typing-indicator-container';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            typingDiv.id = 'typing-indicator';
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 移除正在输入指示器
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        // 获取AI回复
+        function getAIResponse(message) {
+            message = message.toLowerCase();
+            
+            // 检查是否有匹配的回复
+            for (const [key, value] of Object.entries(aiResponses)) {
+                if (message.includes(key.toLowerCase())) {
+                    return value;
+                }
+            }
+            
+            return defaultResponse;
+        }
+        
+        // 发送消息
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                chatInput.value = '';
+                
+                // 显示正在输入指示器
+                addTypingIndicator();
+                
+                // 模拟AI思考时间
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    const response = getAIResponse(message);
+                    addBotMessage(response);
+                }, 1000);
+            }
+        }
+        
+        // 发送按钮点击事件
+        sendMessage.addEventListener('click', sendChatMessage);
+        
+        // 聊天输入框回车事件
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+        
+        // 工单查询功能
+        const ticketIdInput = document.getElementById('ticket-id');
+        const checkTicketButton = document.getElementById('check-ticket');
+        const ticketStatus = document.getElementById('ticket-status');
+        const ticketExample = document.getElementById('ticket-example');
+        
+        checkTicketButton.addEventListener('click', function() {
+            const ticketId = ticketIdInput.value.trim();
+            if (ticketId) {
+                // 模拟工单查询
+                ticketStatus.classList.remove('hidden');
+                ticketExample.classList.add('hidden');
+                
+                // 随机设置工单状态
+                const statuses = ['open', 'progress', 'resolved'];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                const statusBadge = document.getElementById('ticket-status-badge');
+                const progressBar = document.getElementById('ticket-progress-bar');
+                
+                statusBadge.className = 'ticket-status';
+                
+                if (randomStatus === 'open') {
+                    statusBadge.classList.add('status-open');
+                    statusBadge.textContent = '待处理';
+                    progressBar.style.width = '20%';
+                    progressBar.className = 'ticket-progress-bar bg-red-500';
+                } else if (randomStatus === 'progress') {
+                    statusBadge.classList.add('status-progress');
+                    statusBadge.textContent = '处理中';
+                    progressBar.style.width = '60%';
+                    progressBar.className = 'ticket-progress-bar bg-yellow-500';
+                } else {
+                    statusBadge.classList.add('status-resolved');
+                    statusBadge.textContent = '已解决';
+                    progressBar.style.width = '100%';
+                    progressBar.className = 'ticket-progress-bar bg-green-500';
+                }
+                
+                // 更新工单详情
+                document.getElementById('ticket-subject').textContent = '系统登录问题';
+                document.getElementById('ticket-time').textContent = '2023-06-15 14:30';
+                document.getElementById('ticket-estimate').textContent = '2023-06-16 14:30';
+                
+                if (randomStatus === 'open') {
+                    document.getElementById('ticket-update').textContent = '您的工单已收到，我们的技术人员将尽快处理。';
+                } else if (randomStatus === 'progress') {
+                    document.getElementById('ticket-update').textContent = '技术人员正在处理您的问题，预计将在24小时内解决。';
+                } else {
+                    document.getElementById('ticket-update').textContent = '您的问题已解决。请确认解决方案是否满足您的需求。';
+                }
+            }
+        });
+        
+        // 表单提交事件
+        document.getElementById('ticket-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('工单提交成功！您的工单ID是：TS' + Math.floor(Math.random() * 10000));
+            this.reset();
+        });
+        
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('消息发送成功！我们将尽快回复您。');
+            this.reset();
+        });
+        
+        // 在线聊天功能
+        const liveChatButton = document.querySelector('.live-chat-button');
+        const liveChatPanel = document.querySelector('.live-chat-panel');
+        const liveChatClose = document.querySelector('.live-chat-close');
+        const liveChatInput = document.querySelector('.live-chat-input');
+        const liveChatSend = document.querySelector('.live-chat-send');
+        const liveChatBody = document.querySelector('.live-chat-body');
+        
+        liveChatButton.addEventListener('click', function() {
+            liveChatPanel.style.display = 'flex';
+        });
+        
+        liveChatClose.addEventListener('click', function() {
+            liveChatPanel.style.display = 'none';
+        });
+        
+        function sendLiveChatMessage() {
+            const message = liveChatInput.value.trim();
+            if (message) {
+                // 添加用户消息
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'user-message chat-message';
+                userMessageDiv.innerHTML = `<p>${message}</p>`;
+                liveChatBody.appendChild(userMessageDiv);
+                
+                liveChatInput.value = '';
+                liveChatBody.scrollTop = liveChatBody.scrollHeight;
+                
+                // 模拟客服回复
+                setTimeout(() => {
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.className = 'bot-message chat-message';
+                    botMessageDiv.innerHTML = `<p>您好，感谢您的咨询。我们的客服人员将尽快回复您的问题。您也可以提交工单获取更详细的技术支持。</p>`;
+                    liveChatBody.appendChild(botMessageDiv);
+                    liveChatBody.scrollTop = liveChatBody.scrollHeight;
+                }, 1000);
+            }
+        }
+        
+        liveChatSend.addEventListener('click', sendLiveChatMessage);
+        
+        liveChatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendLiveChatMessage();
+            }
+        });
+        
+        // 3D背景效果
+        function initThreeJsBackground() {
+            const container = document.getElementById('canvas-container');
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+            
+            // 创建粒子
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1500;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 100;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            // 创建材质
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                color: 0x0073ff,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            // 创建粒子系统
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            // 动画
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += 0.0005;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // 初始化3D背景
+        initThreeJsBackground();
+        
+        // 页面滚动动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查GSAP是否加载
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                // 注册ScrollTrigger插件
+                gsap.registerPlugin(ScrollTrigger);
+                
+                // 服务卡片动画
+                gsap.utils.toArray('#services .card-hover').forEach((card, i) => {
+                    gsap.from(card, {
+                        y: 50,
+                        opacity: 0,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 80%',
+                            toggleActions: 'play none none none'
+                        },
+                        delay: i * 0.2
+                    });
+                });
+                
+                // 标题动画
+                gsap.utils.toArray('section h2').forEach(title => {
+                    gsap.from(title, {
+                        y: -30,
+                        opacity: 0,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: title,
+                            start: 'top 80%',
+                            toggleActions: 'play none none none'
+                        }
+                    });
+                });
+                
+                // 内容动画
+                gsap.utils.toArray('section p').forEach((paragraph, i) => {
+                    if (paragraph.parentNode.classList.contains('text-center')) {
+                        gsap.from(paragraph, {
+                            y: 20,
+                            opacity: 0,
+                            duration: 0.8,
+                            ease: 'power2.out',
+                            scrollTrigger: {
+                                trigger: paragraph,
+                                start: 'top 80%',
+                                toggleActions: 'play none none none'
+                            },
+                            delay: 0.2
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
